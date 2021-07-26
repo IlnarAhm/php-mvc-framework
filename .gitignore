@@ -1,5 +1,6 @@
 .gitignore
 .idea/
+/vendor/
 tmp/sessions/sess_*
 tmp/log/*.log
 *~
