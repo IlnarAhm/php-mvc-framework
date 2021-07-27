@@ -1,10 +1,9 @@
 <?php
 
-
 namespace Core;
 
-
 use App\Controller\User;
+use Core\RedirectException;
 
 class Application
 {
@@ -20,17 +19,24 @@ class Application
 
     public function run()
     {
-        $this->addRoutes();
         try {
+            $this->addRoutes();
             $this->initController();
-        } catch (\Exception $e) {
-        }
-        try {
             $this->initAction();
-        } catch (\Exception $e) {
-        }
 
-        $this->controller->{$this->actionName}();
+            $view = new View();
+            $this->controller->setView($view);
+
+            $content = $this->controller->{$this->actionName}();
+
+            echo $content;
+        } catch (RedirectException $e) {
+            header("Location: {$e->getUrl()}");
+            die;
+        } catch (RouteException $e) {
+            header("HTTP/1.0 404 Not Found");
+            echo $e->getMessage();
+        }
     }
 
     private function addRoutes()
@@ -45,7 +51,7 @@ class Application
     {
         $controllerName = $this->route->getControllerName();
         if (!class_exists($controllerName)) {
-            throw new \Exception('Cant find controller ' . $controllerName);
+            throw new RouteException('Cant find controller ' . $controllerName);
         }
 
         $this->controller = new $controllerName();
