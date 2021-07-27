@@ -9,6 +9,6 @@ class User extends AbstractModel
 {
     public function getName()
     {
-        return 'Ilnar';
+        return 'Ilnar asd as';
     }
 }
